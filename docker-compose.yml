@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SESSION_SECRET=${SESSION_SECRET:-change_me_in_production}
+      - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-http://localhost:5173}
+    volumes:
+      - ./backend/data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
