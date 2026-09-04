@@ -33,7 +33,9 @@ export const env = {
   // Session
   sessionSecret: requireSecret('SESSION_SECRET', process.env.SESSION_SECRET || 'dev-only-insecure-secret-not-for-production'),
   sessionTtlMs: Number.isFinite(parseTTL) ? parseTTL : 7 * 24 * 60 * 60 * 1000,
-  cookieSecure: process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production',
+  cookieSecure: process.env.COOKIE_SECURE !== undefined
+    ? process.env.COOKIE_SECURE === 'true'
+    : process.env.NODE_ENV === 'production',
 
   // Origins
   frontendOrigin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',

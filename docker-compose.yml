@@ -6,9 +6,10 @@ services:
     environment:
       - NODE_ENV=production
       - SESSION_SECRET=${SESSION_SECRET:-change_me_in_production}
-      - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-http://localhost:5173}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-http://localhost:8080}
     volumes:
-      - ./backend/data:/app/data
+      - bainovia-data:/app/data
     restart: unless-stopped
 
   frontend:
@@ -18,3 +19,6 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+volumes:
+  bainovia-data:

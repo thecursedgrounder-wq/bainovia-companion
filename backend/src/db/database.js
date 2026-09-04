@@ -10,9 +10,20 @@ fs.mkdirSync(path.dirname(env.dbPath), { recursive: true });
 // synchronous, and supports prepared statements (SQL injection safe).
 const db = new DatabaseSync(env.dbPath);
 
-db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA foreign_keys = ON;');
 db.exec('PRAGMA busy_timeout = 5000;');
+
+// Prefer WAL for better concurrency, but fall back to TRUNCATE on
+// filesystems that do not support WAL (e.g. some Windows bind mounts).
+try {
+  db.exec('PRAGMA journal_mode = WAL;');
+} catch {
+  try {
+    db.exec('PRAGMA journal_mode = TRUNCATE;');
+  } catch {
+    // Last resort: default journal mode. Nothing else to do.
+  }
+}
 
 // Migrations run at startup. Each entry is idempotent (CREATE IF NOT EXISTS).
 const migrations = [
